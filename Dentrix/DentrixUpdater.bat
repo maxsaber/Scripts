@@ -92,7 +92,6 @@ IF "%hwinstall%"=="5" GOTO home
 CLS
 ECHO Performing pre-installation tasks
 ECHO Please wait. . .
-
 ::Create Directories and Copy Files
 IF NOT EXIST "C:\IS\DXUpdate" MKDIR C:\IS\DXUpdate
 REM --> DXInstallSettings.ini needs to be copied locally
@@ -231,7 +230,145 @@ RD /S C:\IS\DXUpdate
 GOTO :END
 
 :x86installer
+CLS
+ECHO Performing pre-installation tasks
+ECHO Please wait. . .
+::Create Directories and Copy Files
+IF NOT EXIST "C:\IS\DXUpdate" MKDIR C:\IS\DXUpdate
+REM --> DXInstallSettings.ini needs to be copied locally
+ROBOCOPY \\DX\dximage\DXUpdate\DX C:\IS\DXUpdate\DX DXInstallSettings.ini /E /R:1 /W:5 /TEE
+REM --> DelProf script needs to be copied locally
+ROBOCOPY \\DX\dximage\DXUpdate\Profile C:\IS\DXUpdate\Profile DelProf2.exe /E /R:1 /W:5 /TEE
+REM --> Registry files need to be copied locally
+ROBOCOPY \\DX\dximage\DXUpdate\Registry C:\IS\DXUpdate\Registry *x86*.reg /E /R:1 /W:5 /TEE
+REM --> Check that Y:\ is connected
+IF NOT EXIST Y:\ net use Y:\ \\dx\dximage /persistent:yes
+ECHO Pre-installation tasks complete, beginning Dentrix Install
 
+::Dentrix Install
+CLS
+ECHO Dentrix will now perform a silent installation.
+ECHO.
+ECHO Please wait. . .
+CD /D Y:\DXUpdate\DX\
+setup.exe "/S:C:\IS\DXUpdate\DX\DXInstallSettings.ini"
+CD C:\Program Files\DXONE\3rd Party Installs\LMAddin\lmadd\
+DTX_LMAddIn.vsto
+REM --> Copy Map Y:\ Script
+ROBOCOPY \\dx\dximage\DXUpdate\Scripts C:\Users\Public\Desktop *.lnk /E /R:1 /W:5
+
+::DEXIS Update
+CLS
+ECHO Updating DEXIS Client
+ECHO DO NOT restart the machine when the installation is complete.
+ECHO.
+ECHO Please wait. . .
+CD /D Y:\DXUpdate\DEX\DEXInstall\Common\Software\
+setup.exe
+ECHO.
+ECHO Updating DEXIS/Dentrix Integration
+ECHO.
+ECHO Please wait. . .
+CD /D Y:\DXUpdate\DEX\DXIntegration\Engl-US\DentrixIntegrator\
+DentrixIntegrator.exe
+CLS
+SET /P sirona=Do you need to install the Sirona integration (Worcester Panorex)? [Y/N]: 
+IF /I "%sirona%"=="Y" goto SironaInstall
+IF /I "%sirona%"=="N" goto FLV
+:SironaInstall
+CD /D Y:\DXUpdate\DEX\SironaIntegration
+setup.exe
+
+::Copy DEXIS FLV Files
+:FLV
+IF NOT EXIST "C:\Program Files\DEXIS\FlashDir" MKDIR "C:\Program Files\DEXIS\FlashDir"
+ROBOCOPY "\\dx\dximage\Dexis Calibration Files\Files" "C:\Program Files\DEXIS\FlashDir" *.* /E /R:1 /W:5 /TEE
+
+::Apply Default Registry Settings
+CLS
+ECHO.
+ECHO ================================
+ECHO *                              *
+ECHO * Default User Registry Update *
+ECHO *                              *
+ECHO ================================
+ECHO.
+ECHO 1) Boston
+ECHO 2) Worcester 
+ECHO.
+SET /P x64rupdate=Select an update based on the location of this machine: 
+IF "%x64rupdate%"=="1" goto x86BOS
+IF "%x64rupdate%"=="2" goto x86WOR
+
+:x86BOS
+ECHO.
+ECHO Loading Boston default registry
+ECHO There are two registry additions, click "Yes" on all prompts.
+CD /D C:\Windows\System32
+ECHO Mounting Default user registry
+REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
+CD /D C:\IS\DXUpdate\Registry
+Autox86HKUBostonRegistryWinter2015.reg
+ECHO Unmounting Default user registry
+REG UNLOAD HKU\halford
+x86HKLMRegistryWinter2015.reg
+PAUSE
+ROBOCOPY \\dx\dximage\DXUpdate\Registry\Restore\BOS\x86 C:\Users\Public\Desktop *.lnk /E /R:1 /W:5
+GOTO :x86ROP
+:x86WOR
+ECHO.
+ECHO Loading Worcester default registry
+ECHO There are two registry additions, click "Yes" on all prompts.
+CD /D C:\Windows\System32
+ECHO Mounting Default user registry
+REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
+CD /D C:\IS\DXUpdate\Registry
+Autox86HKUWorcesterRegistryWinter2015.reg
+ECHO Unmounting Default user registry
+REG UNLOAD HKU\halford
+x86HKLMRegistryWinter2015.reg
+PAUSE
+ROBOCOPY \\dx\dximage\DXUpdate\Registry\Restore\WOR\x86 C:\Users\Public\Desktop *.lnk /E /R:1 /W:5
+GOTO :x64ROP
+
+::Remove Old Profiles
+:x86ROP
+CLS
+CD /D C:\IS\DXUpdate\Profile
+delprof2.exe /l /ed:admin* /ed:support
+set /P c=Is the above list of users OK to delete [Y/N]?
+if /I "%c%" EQU "Y" goto :x86ProfDelOK
+if /I "%c%" EQU "N" goto :x86ProfDelNotOK
+:x86ProfDelOK
+delprof2.exe /ed:admin* /ed:support
+GOTO :x86SU
+:x86ProfDelNotOK
+ECHO No profiles will be deleted, please run the profile delete
+ECHO script manually from \DX\dximage\DXUpdate\Profile
+ECHO.
+ECHO Script will now install software updates.
+PAUSE
+GOTO :x86SU
+
+::Software Updates
+:x86SU
+CLS
+ECHO Updating ancillary system software
+CD /D Y:\DXUpdate\Software
+ePadUIv12.exe
+ePadDesktopv12.exe
+
+::Post Installation Tasks
+CLS
+ECHO Installation is complete. Post install clean-up will begin.
+CD /D C:\
+DEL C:\Users\Default\Desktop\*.dotx
+DEL C:\Users\Public\Desktop\*.dotx
+DEL C:\Users\Public\Desktop\Dentrix*.lnk
+ROBOCOPY \\dx\dximage\DXUpdate\Docs C:\Users\Public\Desktop *.dotx /E /R:1 /W:5 /TEE
+ECHO The local install file directory will now be deleted.
+RD /S C:\IS\DXUpdate
+GOTO :END
 
 
 
