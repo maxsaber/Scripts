@@ -104,6 +104,11 @@ REM --> Check that Y:\ is connected
 IF NOT EXIST Y:\ net use Y:\ \\dx\dximage /persistent:yes
 ECHO Pre-installation tasks complete, beginning Dentrix Install
 
+::Uninstall Old Versions
+CLS
+"C:\Program Files\InstallShield Installation Information\{43CA5C26-0F5F-47AD-987E-FDE8A4175FBF}\setup.exe" -runfromtemp -l0x0409  -removeonly
+PAUSE
+
 ::Dentrix Install
 CLS
 ECHO Dentrix will now perform a silent installation.
@@ -111,8 +116,10 @@ ECHO.
 ECHO Please wait. . .
 CD /D Y:\DXUpdate\DX\
 setup.exe "/S:C:\IS\DXUpdate\DX\x64DXInstallSettings.ini"
-CD C:\Program Files\DXONE\3rd Party Installs\LMAddin\lmadd\
-DTX_LMAddIn.vsto
+EXPLORER C:\Program Files\DXONE\3rd Party Installs\LMAddin\lmadd\
+ECHO.
+ECHO Run DTX_LMAddIn.vsto
+PAUSE
 REM --> Copy Map Y:\ Script
 ROBOCOPY \\dx\dximage\DXUpdate\Scripts C:\Users\Public\Desktop *.lnk /E /R:1 /W:5
 
@@ -168,6 +175,7 @@ ECHO Mounting Default user registry
 REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
 CD /D C:\IS\DXUpdate\Registry
 Autox64HKUBostonRegistryWinter2015.reg
+ECHO.
 ECHO Unmounting Default user registry
 REG UNLOAD HKU\halford
 x64HKLMRegistryWinter2015.reg
@@ -183,6 +191,7 @@ ECHO Mounting Default user registry
 REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
 CD /D C:\IS\DXUpdate\Registry
 Autox64HKUWorcesterRegistryWinter2015.reg
+ECHO.
 ECHO Unmounting Default user registry
 REG UNLOAD HKU\halford
 x64HKLMRegistryWinter2015.reg
@@ -202,6 +211,7 @@ if /I "%c%" EQU "N" goto :x64ProfDelNotOK
 delprof2.exe /ed:admin* /ed:support
 GOTO :x64SU
 :x64ProfDelNotOK
+ECHO.
 ECHO No profiles will be deleted, please run the profile delete
 ECHO script manually from \DX\dximage\DXUpdate\Profile
 ECHO.
@@ -216,18 +226,7 @@ ECHO Updating ancillary system software
 CD /D Y:\DXUpdate\Software
 ePadUIv12.exe
 ePadDesktopv12.exe
-
-::Post Installation Tasks
-CLS
-ECHO Installation is complete. Post install clean-up will begin.
-CD /D C:\
-DEL C:\Users\Default\Desktop\*.dotx
-DEL C:\Users\Public\Desktop\*.dotx
-DEL C:\Users\Public\Desktop\Dentrix*.lnk
-ROBOCOPY \\dx\dximage\DXUpdate\Docs C:\Users\Public\Desktop *.dotx /E /R:1 /W:5 /TEE
-ECHO The local install file directory will now be deleted.
-RD /S C:\IS\DXUpdate
-GOTO :END
+GOTO PIT
 
 :x86installer
 CLS
@@ -242,18 +241,25 @@ ROBOCOPY \\DX\dximage\DXUpdate\Profile C:\IS\DXUpdate\Profile DelProf2.exe /E /R
 REM --> Registry files need to be copied locally
 ROBOCOPY \\DX\dximage\DXUpdate\Registry C:\IS\DXUpdate\Registry *x86*.reg /E /R:1 /W:5 /TEE
 REM --> Check that Y:\ is connected
-IF NOT EXIST Y:\ net use Y:\ \\dx\dximage /persistent:yes
+net use Y:\ \\dx\dximage /persistent:yes
 ECHO Pre-installation tasks complete, beginning Dentrix Install
 
-::Dentrix Install
+::Uninstall Old Versions
 CLS
+"C:\Program Files\InstallShield Installation Information\{43CA5C26-0F5F-47AD-987E-FDE8A4175FBF}\setup.exe" -runfromtemp -l0x0409  -removeonly
+PAUSE
+
+::Dentrix Install
+ECHO.
 ECHO Dentrix will now perform a silent installation.
 ECHO.
 ECHO Please wait. . .
 CD /D Y:\DXUpdate\DX\
 setup.exe "/S:C:\IS\DXUpdate\DX\DXInstallSettings.ini"
-CD C:\Program Files\DXONE\3rd Party Installs\LMAddin\lmadd\
-DTX_LMAddIn.vsto
+EXPLORER C:\Program Files\DXONE\3rd Party Installs\LMAddin\lmadd\
+ECHO.
+ECHO Run DTX_LMAddIn.vsto
+PAUSE
 REM --> Copy Map Y:\ Script
 ROBOCOPY \\dx\dximage\DXUpdate\Scripts C:\Users\Public\Desktop *.lnk /E /R:1 /W:5
 
@@ -309,6 +315,7 @@ ECHO Mounting Default user registry
 REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
 CD /D C:\IS\DXUpdate\Registry
 Autox86HKUBostonRegistryWinter2015.reg
+ECHO.
 ECHO Unmounting Default user registry
 REG UNLOAD HKU\halford
 x86HKLMRegistryWinter2015.reg
@@ -324,6 +331,7 @@ ECHO Mounting Default user registry
 REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
 CD /D C:\IS\DXUpdate\Registry
 Autox86HKUWorcesterRegistryWinter2015.reg
+ECHO.
 ECHO Unmounting Default user registry
 REG UNLOAD HKU\halford
 x86HKLMRegistryWinter2015.reg
@@ -343,6 +351,7 @@ if /I "%c%" EQU "N" goto :x86ProfDelNotOK
 delprof2.exe /ed:admin* /ed:support
 GOTO :x86SU
 :x86ProfDelNotOK
+ECHO.
 ECHO No profiles will be deleted, please run the profile delete
 ECHO script manually from \DX\dximage\DXUpdate\Profile
 ECHO.
@@ -353,14 +362,16 @@ GOTO :x86SU
 ::Software Updates
 :x86SU
 CLS
-ECHO Updating ancillary system software
+ECHO Updating ancillary system software. . .
 CD /D Y:\DXUpdate\Software
 ePadUIv12.exe
 ePadDesktopv12.exe
+GOTO PIT
 
 ::Post Installation Tasks
+:PIT
 CLS
-ECHO Installation is complete. Post install clean-up will begin.
+ECHO Installation is complete, post install clean-up will now begin. . .
 CD /D C:\
 DEL C:\Users\Default\Desktop\*.dotx
 DEL C:\Users\Public\Desktop\*.dotx
@@ -369,8 +380,6 @@ ROBOCOPY \\dx\dximage\DXUpdate\Docs C:\Users\Public\Desktop *.dotx /E /R:1 /W:5 
 ECHO The local install file directory will now be deleted.
 RD /S C:\IS\DXUpdate
 GOTO :END
-
-
 
 :END
 CLS
