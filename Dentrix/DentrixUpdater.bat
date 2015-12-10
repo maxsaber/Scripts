@@ -46,11 +46,12 @@ ECHO.
 ECHO 5) Exit Updater
 ECHO.
 SET /P install=Enter an Install Option: 
-IF "%install%"=="1" goto x64installer
-IF "%install%"=="2" goto x86installer
-IF "%install%"=="3" goto bitscheck
-IF "%install%"=="4" goto hardware
+IF "%install%"=="1" GOTO x64installer
+IF "%install%"=="2" GOTO x86installer
+IF "%install%"=="3" GOTO bitscheck
+IF "%install%"=="4" GOTO hardware
 IF "%install%"=="5" exit
+IF /I "%install%"=="PIT" GOTO PIT
 
 :bitscheck
 Set _Bitness=64
@@ -376,6 +377,10 @@ CD /D C:\
 DEL C:\Users\Default\Desktop\*.dotx
 DEL C:\Users\Public\Desktop\*.dotx
 DEL C:\Users\Public\Desktop\Dentrix*.lnk
+DEL C:\Users\Public\Desktop\DEXIS*.lnk
+DEL C:\Users\Public\Desktop\Mozilla*.lnk
+DEL C:\Users\Public\Desktop\DXImage.lnk
+DEL C:\Users\Public\Desktop\*.url
 ROBOCOPY \\dx\dximage\DXUpdate\Docs C:\Users\Public\Desktop *.dotx /E /R:1 /W:5 /TEE
 ECHO The local install file directory will now be deleted.
 RD /S C:\IS\DXUpdate
