@@ -384,7 +384,6 @@ DEL C:\Users\Public\Desktop\*.url
 ROBOCOPY \\dx\dximage\DXUpdate\Docs C:\Users\Public\Desktop *.dotx /E /R:1 /W:5 /TEE
 ECHO The local install file directory will now be deleted.
 RD /S C:\IS\DXUpdate
-GOTO :END
 
 :END
 CLS
