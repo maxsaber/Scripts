@@ -114,6 +114,8 @@ CD /D Y:\DXUpdate\DX\
 setup.exe "/S:C:\IS\DXUpdate\DX\x64DXInstallSettings.ini"
 CD C:\Program Files\DXONE\3rd Party Installs\LMAddin\lmadd\
 DTX_LMAddIn.vsto
+REM --> Copy Map Y:\ Script
+ROBOCOPY \\dx\dximage\DXUpdate\Scripts C:\Users\Public\Desktop *.lnk /E /R:1 /W:5
 
 ::DEXIS Update
 CLS
@@ -159,27 +161,29 @@ IF "%x64rupdate%"=="1" goto x64BOS
 IF "%x64rupdate%"=="2" goto x64WOR
 
 :x64BOS
+ECHO.
 ECHO Loading Boston default registry
 ECHO There are two registry additions, click "Yes" on all prompts.
 CD /D C:\Windows\System32
 REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
 CD /D C:\IS\DXUpdate\Registry
-x64HKLMRegistryWinter2015.reg
 Autox64HKUBostonRegistryWinter2015.reg
-PAUSE
 REG UNLOAD HKU\halford
+x64HKLMRegistryWinter2015.reg
+PAUSE
 ROBOCOPY \\dx\dximage\DXUpdate\Registry\Restore\BOS\x64 C:\Users\Public\Desktop *.lnk /E /R:1 /W:5
 GOTO :x64ROP
 :x64WOR
+ECHO.
 ECHO Loading Worcester default registry
 ECHO There are two registry additions, click "Yes" on all prompts.
 CD /D C:\Windows\System32
 REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
 CD /D C:\IS\DXUpdate\Registry
-x64HKLMRegistryWinter2015.reg
 Autox64HKUWorcesterRegistryWinter2015.reg
-PAUSE
 REG UNLOAD HKU\halford
+x64HKLMRegistryWinter2015.reg
+PAUSE
 ROBOCOPY \\dx\dximage\DXUpdate\Registry\Restore\WOR\x64 C:\Users\Public\Desktop *.lnk /E /R:1 /W:5
 GOTO :x64ROP
 
