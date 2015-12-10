@@ -165,9 +165,11 @@ ECHO.
 ECHO Loading Boston default registry
 ECHO There are two registry additions, click "Yes" on all prompts.
 CD /D C:\Windows\System32
+ECHO Mounting Default user registry
 REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
 CD /D C:\IS\DXUpdate\Registry
 Autox64HKUBostonRegistryWinter2015.reg
+ECHO Unmounting Default user registry
 REG UNLOAD HKU\halford
 x64HKLMRegistryWinter2015.reg
 PAUSE
@@ -178,9 +180,11 @@ ECHO.
 ECHO Loading Worcester default registry
 ECHO There are two registry additions, click "Yes" on all prompts.
 CD /D C:\Windows\System32
+ECHO Mounting Default user registry
 REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
 CD /D C:\IS\DXUpdate\Registry
 Autox64HKUWorcesterRegistryWinter2015.reg
+ECHO Unmounting Default user registry
 REG UNLOAD HKU\halford
 x64HKLMRegistryWinter2015.reg
 PAUSE
@@ -221,9 +225,8 @@ CD /D C:\
 DEL C:\Users\Default\Desktop\*.dotx
 DEL C:\Users\Public\Desktop\*.dotx
 DEL C:\Users\Public\Desktop\Dentrix*.lnk
-ROBOCOPY Y:\DXUpdate\Docs C:\Users\Public\Desktop *.dotx /E /R:1 /W:5 /TEE
+ROBOCOPY \\dx\dximage\DXUpdate\Docs C:\Users\Public\Desktop *.dotx /E /R:1 /W:5 /TEE
 ECHO The local install file directory will now be deleted.
-PAUSE
 RD /S C:\IS\DXUpdate
 GOTO :END
 
@@ -234,7 +237,8 @@ GOTO :END
 
 :END
 CLS
-ECHO Installation is complete.
+ECHO Dentrix update is complete.
 ECHO.
-ECHO Machine will now reboot.
+ECHO Machine will now reboot, press Ctrl-C to cancel.
+PAUSE
 shutdown /r /t 0 /d p:4:1
