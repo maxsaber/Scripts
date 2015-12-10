@@ -105,25 +105,6 @@ REM --> Check that Y:\ is connected
 IF NOT EXIST Y:\ net use Y:\ \\dx\dximage /persistent:yes
 ECHO Pre-installation tasks complete, beginning Dentrix Install
 
-::Dentrix v.8.0 Uninstall
-REM CLS
-REM ECHO Removing old Dentrix versions
-REM "C:\Program Files (x86)\InstallShield Installation Information\{43CA5C26-0F5F-47AD-987E-FDE8A4175FBF}\setup.exe" -runfromtemp -l0x0409  -removeonly
-
-::Install SQL 2008 Client
-REM CLS
-REM ECHO Installing SQL 2008 Client Tools
-REM ECHO.
-REM ECHO Please wait. . .
-REM CD /D Y:\DXUpdate\SQL
-REM setup.exe /ConfigurationFile="Y:\DXUpdate\SQL\ConfigurationFile.ini"
-REM CD /D C:\Windows\System32\
-REM mmc.exe /32 C:\Windows\system32\SQLServerManager10.msc
-REM CLS
-REM ECHO Please confirm there is a Named Pipe for Dentrix:
-REM ECHO SQL Native Client 10.0 Configuration > Aliases
-REM PAUSE
-
 ::Dentrix Install
 CLS
 ECHO Dentrix will now perform a silent installation.
