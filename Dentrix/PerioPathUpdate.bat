@@ -38,6 +38,7 @@ ECHO *                              *
 ECHO ================================
 IF NOT EXIST C:\IS\DXUpdate mkdir C:\IS\DXUpdate
 ROBOCOPY Y:\DXUpdate\Perio C:\IS\DXUpdate *.reg /E /R:1 /W:5 /TEE
+CD C:\IS\DXUpdate
 HKCUPerioPathUpdate.reg
 HKUPerioPathUpdate.reg
 RD /S C:\IS\DXUpdate
