@@ -1,0 +1,9 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_USERS\halford\Software\Dentrix Dental Systems, Inc.]
+
+[HKEY_USERS\halford\Software\Dentrix Dental Systems, Inc.\Dentrix]
+
+[HKEY_USERS\halford\Software\Dentrix Dental Systems, Inc.\Dentrix\PERIOPATH]
+"PATH1"="1,2,3,7,8,9,4,5,6"
+"PATHNAME1"="PDGMBS"
