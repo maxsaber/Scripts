@@ -37,9 +37,14 @@ ECHO *       Perio Path Update      *
 ECHO *                              *
 ECHO ================================
 IF NOT EXIST C:\IS\DXUpdate mkdir C:\IS\DXUpdate
-ROBOCOPY Y:\DXUpdate\Perio C:\IS\DXUpdate *.reg /E /R:1 /W:5 /TEE
+ROBOCOPY Y:\DXUpdate\Perio C:\IS\DXUpdate *.reg /E /R:1 /W:5 /NP
 CD C:\IS\DXUpdate
 HKCUPerioPathUpdate.reg
+ECHO Mounting Default user registry
+REG LOAD HKU\halford C:\Users\Default\NTUSER.dat
 HKUPerioPathUpdate.reg
-RD /S C:\IS\DXUpdate
+ECHO.
+ECHO Unmounting Default user registry
+REG UNLOAD HKU\halford
+RD /S /Q C:\IS\DXUpdate
 EXIT
